@@ -45,9 +45,6 @@ class FinderNtfsContext final
     std::unordered_map<ULONGLONG, FileRecordBase> m_baseFileRecordMap;
     std::unordered_map<ULONGLONG, std::vector<FileRecordName>> m_parentToChildMap;
 
-    mutable std::shared_mutex m_baseFileRecordMutex;
-    mutable std::shared_mutex m_parentToChildMutex;
-
     bool m_isLoaded = false;
 
 public:
