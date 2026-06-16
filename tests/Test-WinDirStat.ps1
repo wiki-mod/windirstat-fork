@@ -7268,7 +7268,7 @@ try {
         Assert-Equal $ctx 'FileHashAlgorithm maximum' $s.FileHashAlgorithm 4
         Assert-Equal $ctx 'LargeFileCount maximum' $s.LargeFileCount 10000
         Assert-Equal $ctx 'MinimizeViewThreshold maximum' $s.MinimizeViewThreshold 10000
-        Assert-Equal $ctx 'ScanningThreads maximum' $s.ScanningThreads 16
+        Assert-True  $ctx 'ScanningThreads maximum' ($s.ScanningThreads -ge 16 -and $s.ScanningThreads -le 64)
         Assert-Equal $ctx 'DarkMode maximum' $s.DarkMode 2
         Assert-Equal $ctx 'SelectDrivesRadio maximum' $s.SelectDrivesRadio 2
         Assert-Equal $ctx 'FolderHistoryCount maximum' $s.FolderHistoryCount 100

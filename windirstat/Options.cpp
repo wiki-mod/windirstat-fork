@@ -142,7 +142,11 @@ Setting<int> COptions::FileHashAlgorithm(OptionsGeneral, L"FileHashAlgorithm",
     HASH_SHA512, HASH_MD5, HASH_SHA512);
 Setting<int> COptions::LargeFileCount(OptionsGeneral, L"LargeFileCount", 50, 0, 10000);
 Setting<int> COptions::MinimizeViewThreshold(OptionsGeneral, L"MinimizeViewThreshold", 10, 1, 10000);
-Setting<int> COptions::ScanningThreads(OptionsGeneral, L"ScanningThreads", 4, 1, 16);
+// Upper bound scales with available hardware (2× logical cores), capped at 64 to avoid
+// scheduler thrash on I/O-bound workloads; floor of 16 preserves the old UI maximum.
+static const int kMaxScanningThreads = std::clamp(
+    static_cast<int>(std::thread::hardware_concurrency()) * 2, 16, 64);
+Setting<int> COptions::ScanningThreads(OptionsGeneral, L"ScanningThreads", 16, 1, kMaxScanningThreads);
 Setting<int> COptions::SelectDrivesRadio(OptionsDriveSelect, L"SelectDrivesRadio", 0, 0, 2);
 Setting<int> COptions::SizeProportionIndent(OptionsFileTree, L"SizeProportionIndent", 16, 0, 1000);
 Setting<int> COptions::FileTreeColorCount(OptionsFileTree, L"FileTreeColorCount", 8, 1, TREELISTCOLORCOUNT);

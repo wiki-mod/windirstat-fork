@@ -94,9 +94,18 @@ BOOL CPageAdvanced::OnInitDialog()
     m_skipProtectedFile = COptions::ExcludeProtectedFile;
     m_useBackupRestore = COptions::UseBackupRestore;
     m_processHardlinks = COptions::ProcessHardlinks;
-    m_scanningThreads = COptions::ScanningThreads - 1;
     m_fileHashAlgorithm = COptions::FileHashAlgorithm;
     m_scanIoPriority = COptions::ScanIoPriority;
+
+    // Populate thread count combo dynamically so it matches the runtime hardware maximum
+    CComboBox* pCombo = static_cast<CComboBox*>(GetDlgItem(IDC_COMBO_THREADS));
+    if (pCombo != nullptr)
+    {
+        pCombo->ResetContent();
+        for (int i = COptions::ScanningThreads.Min(); i <= COptions::ScanningThreads.Max(); ++i)
+            pCombo->AddString(std::to_wstring(i).c_str());
+    }
+    m_scanningThreads = COptions::ScanningThreads - 1;
     m_largestFileCount = std::to_wstring(COptions::LargeFileCount.Obj()).c_str();
     m_folderHistoryCount = std::to_wstring(COptions::FolderHistoryCount.Obj()).c_str();
 
