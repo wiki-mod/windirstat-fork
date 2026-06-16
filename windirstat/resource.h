@@ -1,4 +1,4 @@
-//{{NO_DEPENDENCIES}}
+﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by windirstat.rc
 //
@@ -17,7 +17,7 @@
 #define IDD_PAGE_PERMISSIONS            114
 #define IDD_PAGE_GPU                    115
 #define IDR_MAINFRAME                   128
-#define IDR_GPUHASH_SHADER              133
+#define IDR_GPUHASH_SHADER              134
 #define IDR_POPUP_TREE                  129
 #define IDR_POPUP_MAP                   130
 #define IDR_LICENSE                     131
