@@ -863,7 +863,17 @@ void CMainFrame::InitialShowWindow()
 void CMainFrame::InvokeInMessageThread(std::function<void()> callback) const
 {
     if (CDirStatApp::Get()->m_nThreadID == GetCurrentThreadId()) callback();
-    else Get()->SendMessage(WM_CALLBACKUI, 0, reinterpret_cast<LPARAM>(&callback));
+    else Get()->SendMessage(WM_CALLBACKUI, 0, reinterpret_cast<LPARAM>(
+        new std::function<void()>(std::move(callback))));
+}
+
+void CMainFrame::PostToMessageThread(std::function<void()> callback)
+{
+    if (CDirStatApp::Get()->m_nThreadID == GetCurrentThreadId())
+        callback();
+    else
+        Get()->PostMessage(WM_CALLBACKUI, 0, reinterpret_cast<LPARAM>(
+            new std::function<void()>(std::move(callback))));
 }
 
 void CMainFrame::OnClose()
@@ -1187,8 +1197,9 @@ void CMainFrame::OnTimer(const UINT_PTR nIDEvent)
 
 LRESULT CMainFrame::OnCallbackRequest(WPARAM, const LPARAM lParam)
 {
-    const auto & callback = *static_cast<std::function<void()>*>(std::bit_cast<LPVOID>(lParam));
-    callback();
+    const std::unique_ptr<std::function<void()>> callback(
+        static_cast<std::function<void()>*>(std::bit_cast<LPVOID>(lParam)));
+    (*callback)();
     return 0;
 }
 
@@ -1320,8 +1331,8 @@ void CMainFrame::UpdateCleanupMenu(CMenu* menu, const bool triggerAsync)
         QueryRecycleBin(m_recycleBinItems, m_recycleBinBytes);
         QueryShadowCopies(m_shadowCopyCount, m_shadowCopyBytes);
 
-        // Use InvokeInMessageThread to update the menu on the UI thread
-        InvokeInMessageThread([this]()
+        // Use PostToMessageThread to update the menu on the UI thread
+        PostToMessageThread([this]()
         {
             // Check if the menu is still valid and visible
             const auto [menuObj, menuPos] = LocateNamedMenu(GetMenu(), Localization::Lookup(IDS_MENU_CLEANUP), false);

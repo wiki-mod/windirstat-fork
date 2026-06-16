@@ -160,6 +160,7 @@ protected:
 
     void InitialShowWindow();
     void InvokeInMessageThread(std::function<void()> callback) const;
+    static void PostToMessageThread(std::function<void()> callback);
 
     void RestoreTreeMapView(bool forced = false);
     void RestoreExtensionView();

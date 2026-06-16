@@ -66,16 +66,20 @@ void CIconHandler::Initialize()
                 std::wstring descTmp;
                 const HICON iconTmp = FetchShellIcon(path, 0, attr, desc != nullptr ? &descTmp : nullptr);
 
-                // Join the UI thread and see if the item still exists
-                // since it could have been deleted since originally
-                // requested
-                CMainFrame::Get()->InvokeInMessageThread([&]
+                // Post asynchronously so icon-loader threads never block on
+                // the UI message loop (e.g. while a context menu is open).
+                // Structured-binding variables are references into itemOpt
+                // which goes out of scope, so copy each pointer by value.
+                CMainFrame::PostToMessageThread(
+                    [capturedItem = item, capturedControl = control,
+                     capturedIcon = icon, capturedDesc = desc,
+                     iconTmp, descTmp = std::move(descTmp)]() mutable
                 {
-                    const auto i = control->FindListItem(item);
-                    if (i == -1 || !item->IsVisible()) return;
-                    *icon = iconTmp;
-                    if (desc != nullptr) *desc = descTmp;
-                    control->RedrawItems(i, i);
+                    const auto i = capturedControl->FindListItem(capturedItem);
+                    if (i == -1 || !capturedItem->IsVisible()) return;
+                    *capturedIcon = iconTmp;
+                    if (capturedDesc != nullptr) *capturedDesc = std::move(descTmp);
+                    capturedControl->RedrawItems(i, i);
                 });
             }
             CoUninitialize();

@@ -143,8 +143,8 @@ void CFileTopControl::RemoveItem(CItem* item)
         return toRemove.contains(itemToRemove);
     });
 
-    // Use the sort function to remove visual items
-    CMainFrame::Get()->InvokeInMessageThread([&]
+    // Sort on the UI thread (m_sizeMap already updated above on the worker thread)
+    CMainFrame::PostToMessageThread([this]
     {
         SortItems();
     });
