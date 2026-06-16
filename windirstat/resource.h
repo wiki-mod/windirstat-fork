@@ -1,4 +1,4 @@
-﻿//{{NO_DEPENDENCIES}}
+//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by windirstat.rc
 //
@@ -257,15 +257,15 @@
 #define ID_TOOLS_STORAGE_ANALYTICS      32946
 #define ID_VIEW_CONFIGURE_LAYOUT        32948
 #define IDD_PAGE_LAYOUT                 116
-#define IDC_LAYOUT_MODE_DEFAULT         1136
-#define IDC_LAYOUT_MODE_SIDE            1137
-#define IDC_LAYOUT_MODE_WIDE            1138
-#define IDC_LAYOUT_TREEMAP_RIGHT        1139
-#define IDC_LAYOUT_TREEMAP_LEFT         1140
-#define IDC_LAYOUT_WIDE_COL0            1141
-#define IDC_LAYOUT_WIDE_COL1            1142
-#define IDC_LAYOUT_WIDE_COL2            1143
-#define IDC_LAYOUT_RESET                1144
+#define IDC_LAYOUT_MODE_DEFAULT         1149
+#define IDC_LAYOUT_MODE_SIDE            1150
+#define IDC_LAYOUT_MODE_WIDE            1151
+#define IDC_LAYOUT_TREEMAP_RIGHT       1152
+#define IDC_LAYOUT_TREEMAP_LEFT        1153
+#define IDC_LAYOUT_WIDE_COL0           1154
+#define IDC_LAYOUT_WIDE_COL1           1155
+#define IDC_LAYOUT_WIDE_COL2           1156
+#define IDC_LAYOUT_RESET               1157
 #define IDS_AUTHOR_EMAIL                57345
 #define IDS_URL_WEBSITE                 57346
 #define IDS_URL_HELP                    57347
@@ -275,16 +275,13 @@
 #define IDS_FILTER_EXAMPLE_FILES_REGEX  57351
 #define IDS_FILTER_EXAMPLE_DIRS_REGEX   57352
 
-#define IDC_EXT_JUNK_ENABLE             1146
-#define IDC_EXT_JUNK_PATTERN            1147
-
 // Next default values for new objects
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        307
 #define _APS_NEXT_COMMAND_VALUE         32949
-#define _APS_NEXT_CONTROL_VALUE         1149
+#define _APS_NEXT_CONTROL_VALUE         1158
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
