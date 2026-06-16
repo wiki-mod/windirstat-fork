@@ -36,6 +36,7 @@ void CPageAdvanced::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_SKIP_CLOUD_LINKS, m_skipDupeDetectionCloudLinks);
     DDX_Check(pDX, IDC_EXCLUDE_HIDDEN_DIRECTORY, m_skipHiddenDirectory);
     DDX_Check(pDX, IDC_EXCLUDE_PROTECTED_DIRECTORY, m_skipProtectedDirectory);
+    DDX_Check(pDX, IDC_EXCLUDE_ADS_IGNORED, m_excludeAdsIgnored);
     DDX_Check(pDX, IDC_BACKUP_RESTORE, m_useBackupRestore);
     DDX_Check(pDX, IDC_EXCLUDE_SYMLINKS_FILE, m_excludeSymbolicLinksFile);
     DDX_Check(pDX, IDC_EXCLUDE_HIDDEN_FILE, m_skipHiddenFile);
@@ -51,6 +52,7 @@ BEGIN_MESSAGE_MAP(CPageAdvanced, CMFCPropertyPage)
     ON_BN_CLICKED(IDC_BACKUP_RESTORE, OnSettingChanged)
     ON_BN_CLICKED(IDC_EXCLUDE_HIDDEN_DIRECTORY, OnSettingChanged)
     ON_BN_CLICKED(IDC_EXCLUDE_PROTECTED_DIRECTORY, OnSettingChanged)
+    ON_BN_CLICKED(IDC_EXCLUDE_ADS_IGNORED, OnSettingChanged)
     ON_CBN_SELENDOK(IDC_COMBO_THREADS, OnSettingChanged)
     ON_CBN_SELENDOK(IDC_HASH_ALGORITHM, OnSettingChanged)
     ON_BN_CLICKED(IDC_EXCLUDE_VOLUME_MOUNT_POINTS, OnSettingChanged)
@@ -88,6 +90,7 @@ BOOL CPageAdvanced::OnInitDialog()
     m_skipDupeDetectionCloudLinks = COptions::SkipDupeDetectionCloudLinks;
     m_skipHiddenDirectory = COptions::ExcludeHiddenDirectory;
     m_skipProtectedDirectory = COptions::ExcludeProtectedDirectory;
+    m_excludeAdsIgnored = COptions::ExcludeAdsIgnored;
     m_excludeSymbolicLinksFile = COptions::ExcludeSymbolicLinksFile;
     m_skipHiddenFile = COptions::ExcludeHiddenFile;
     m_skipProtectedFile = COptions::ExcludeProtectedFile;
@@ -113,6 +116,7 @@ void CPageAdvanced::OnOK()
         COptions::ExcludeSymbolicLinksFile && COptions::ExcludeSymbolicLinksFile != static_cast<bool>(m_excludeSymbolicLinksFile);
     const bool refreshAll = COptions::ExcludeHiddenDirectory != static_cast<bool>(m_skipHiddenDirectory) ||
         COptions::ExcludeProtectedDirectory != static_cast<bool>(m_skipProtectedDirectory) ||
+        COptions::ExcludeAdsIgnored != static_cast<bool>(m_excludeAdsIgnored) ||
         COptions::ExcludeHiddenFile != static_cast<bool>(m_skipHiddenFile) ||
         COptions::ExcludeProtectedFile != static_cast<bool>(m_skipProtectedFile) ||
         COptions::ProcessHardlinks != static_cast<bool>(m_processHardlinks) ||
@@ -124,6 +128,7 @@ void CPageAdvanced::OnOK()
     COptions::SkipDupeDetectionCloudLinks = (FALSE != m_skipDupeDetectionCloudLinks);
     COptions::ExcludeHiddenDirectory = (FALSE != m_skipHiddenDirectory);
     COptions::ExcludeProtectedDirectory = (FALSE != m_skipProtectedDirectory);
+    COptions::ExcludeAdsIgnored = (FALSE != m_excludeAdsIgnored);
     COptions::ExcludeSymbolicLinksFile = (FALSE != m_excludeSymbolicLinksFile);
     COptions::ExcludeHiddenFile = (FALSE != m_skipHiddenFile);
     COptions::ExcludeProtectedFile = (FALSE != m_skipProtectedFile);

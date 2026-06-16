@@ -46,6 +46,7 @@ protected:
     BOOL m_skipDupeDetectionCloudLinks = TRUE;
     BOOL m_skipHiddenDirectory = FALSE;
     BOOL m_skipProtectedDirectory = FALSE;
+    BOOL m_excludeAdsIgnored = FALSE;
     BOOL m_excludeSymbolicLinksFile = TRUE;
     BOOL m_skipHiddenFile = FALSE;
     BOOL m_skipProtectedFile = FALSE;

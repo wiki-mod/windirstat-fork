@@ -36,6 +36,7 @@ Setting<bool> COptions::ExcludeSymbolicLinksDirectory(OptionsGeneral, L"ExcludeS
 Setting<bool> COptions::ExcludeVolumeMountPoints(OptionsGeneral, L"ExcludeVolumeMountPoints", true);
 Setting<bool> COptions::ExcludeHiddenDirectory(OptionsGeneral, L"ExcludeHiddenDirectory", false);
 Setting<bool> COptions::ExcludeProtectedDirectory(OptionsGeneral, L"ExcludeProtectedDirectory", false);
+Setting<bool> COptions::ExcludeAdsIgnored(OptionsGeneral, L"ExcludeAdsIgnored", false);
 Setting<bool> COptions::ExcludeSymbolicLinksFile(OptionsGeneral, L"ExcludeSymbolicLinksFile", true);
 Setting<bool> COptions::ExcludeHiddenFile(OptionsGeneral, L"ExcludeHiddenFile", false);
 Setting<bool> COptions::ExcludeProtectedFile(OptionsGeneral, L"ExcludeProtectedFile", false);

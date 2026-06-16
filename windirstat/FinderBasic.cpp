@@ -292,6 +292,21 @@ DWORD FinderBasic::GetReparseTag() const
     return m_reparseTag;
 }
 
+bool FinderBasic::HasIgnoredStream() const
+{
+    WIN32_FIND_STREAM_DATA streamData;
+    const SmartPointer handle(FindClose, FindFirstStreamW(GetFilePathLong().c_str(), FindStreamInfoStandard, &streamData, 0));
+    if (handle == INVALID_HANDLE_VALUE) return false;
+
+    do
+    {
+        if (_wcsicmp(streamData.cStreamName, L":com.dropbox.ignored:$DATA") == 0) return true;
+    }
+    while (FindNextStreamW(handle, &streamData));
+
+    return false;
+}
+
 bool FinderBasic::DoesFileExist(const std::wstring& folder, const std::wstring& file)
 {
     const std::filesystem::path p = file.empty()

@@ -74,6 +74,7 @@ class FinderBasic final : public Finder
     SmartPointer<HANDLE, decltype(&CloseHandle)> m_handle{CloseHandle, HANDLE{}};
     DWORD m_initialAttributes = INVALID_FILE_ATTRIBUTES;
     DWORD m_reparseTag = 0;
+    bool m_hasIgnoredStream = false;
     bool m_firstRun = true;
     bool m_statMode = false;
 
@@ -96,6 +97,7 @@ public:
     inline ULONGLONG GetIndex() const override;
     inline DWORD GetReparseTag() const override;
     inline bool IsReserved() const override { return false; };
+    bool HasIgnoredStream() const override;
 
     static bool DoesFileExist(const std::wstring& folder, const std::wstring& file = {});
 };

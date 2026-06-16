@@ -57,6 +57,7 @@
 #define IDC_EXCLUDE_PROTECTED_DIRECTORY 1035
 #define IDC_LIST                        1036
 #define IDC_EXCLUDE_PROTECTED_FILE      1037
+#define IDC_EXCLUDE_ADS_IGNORED         1136
 #define IDC_TITLE                       1038
 #define IDC_EXCLUDE_SYMLINKS_FILE       1039
 #define IDC_COMMANDLINE                 1040
@@ -254,7 +255,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        306
 #define _APS_NEXT_COMMAND_VALUE         32948
-#define _APS_NEXT_CONTROL_VALUE         1136
+#define _APS_NEXT_CONTROL_VALUE         1137
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

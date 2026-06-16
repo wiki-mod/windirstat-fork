@@ -121,6 +121,7 @@ public:
     static Setting<bool> ExcludeVolumeMountPoints;
     static Setting<bool> ExcludeHiddenDirectory;
     static Setting<bool> ExcludeProtectedDirectory;
+    static Setting<bool> ExcludeAdsIgnored;
     static Setting<bool> ExcludeSymbolicLinksFile;
     static Setting<bool> ExcludeHiddenFile;
     static Setting<bool> ExcludeProtectedFile;

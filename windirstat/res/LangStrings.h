@@ -7,6 +7,7 @@ constexpr std::wstring_view IDS_ABOUT_THANKS = L"IDS_ABOUT_THANKS";
 constexpr std::wstring_view IDS_ABOUT_THANKS_TEXT = L"IDS_ABOUT_THANKS_TEXT";
 constexpr std::wstring_view IDS_ABOUT_TITLE = L"IDS_ABOUT_TITLE";
 constexpr std::wstring_view IDS_ADMIN = L"IDS_ADMIN";
+constexpr std::wstring_view IDS_ADS_IGNORED = L"IDS_ADS_IGNORED";
 constexpr std::wstring_view IDS_ALL_FILES = L"IDS_ALL_FILES";
 constexpr std::wstring_view IDS_ANALYTICS_CONFIG = L"IDS_ANALYTICS_CONFIG";
 constexpr std::wstring_view IDS_ANALYTICS_TITLE = L"IDS_ANALYTICS_TITLE";
