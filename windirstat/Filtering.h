@@ -34,6 +34,7 @@ public:
     static std::vector<std::wstring> IncludeDirsAnchors;
     static ULONGLONG SizeMinimumCalculated;
     static FILETIME MaxAgeFileTimeCutoff;
+    static std::wstring FilteringOwner;
     static bool FilterActive;
 
     static void CompileFilters();

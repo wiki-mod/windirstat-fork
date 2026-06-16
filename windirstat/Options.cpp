@@ -169,6 +169,7 @@ Setting<std::wstring> COptions::FilteringExcludeDirs(OptionsDriveSelect, L"Filte
 Setting<std::wstring> COptions::FilteringExcludeFiles(OptionsDriveSelect, L"FilteringExcludeFiles");
 Setting<std::wstring> COptions::FilteringIncludeDirs(OptionsDriveSelect, L"FilteringIncludeDirs");
 Setting<std::wstring> COptions::FilteringIncludeFiles(OptionsDriveSelect, L"FilteringIncludeFiles");
+Setting<std::wstring> COptions::FilteringOwner(OptionsGeneral, L"FilteringOwner");
 Setting<WINDOWPLACEMENT> COptions::MainWindowPlacement(OptionsGeneral, L"MainWindowPlacement");
 
 CTreeMap::Options COptions::TreeMapOptions;

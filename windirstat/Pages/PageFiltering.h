@@ -45,6 +45,7 @@ protected:
     int m_filteringSizeUnits = 0;
     BOOL m_filteringUseRegex = FALSE;
     int m_filteringMaxAgeDays = 0;
+    CString m_filteringOwner;
     CString m_filteringExcludeDirs;
     CString m_filteringExcludeFiles;
     CString m_filteringIncludeDirs;

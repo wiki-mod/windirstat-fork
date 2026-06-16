@@ -230,6 +230,7 @@ public:
     static Setting<std::wstring> FilteringExcludeFiles;
     static Setting<std::wstring> FilteringIncludeDirs;
     static Setting<std::wstring> FilteringIncludeFiles;
+    static Setting<std::wstring> FilteringOwner;
     static Setting<std::wstring> SearchTerm;
     static Setting<WINDOWPLACEMENT> MainWindowPlacement;
 

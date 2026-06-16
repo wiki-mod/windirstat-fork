@@ -38,6 +38,7 @@ void CPageFiltering::DoDataExchange(CDataExchange* pDX)
     DDX_Text(pDX, IDC_FILTERING_SIZE_MIN, m_filteringSizeMinimum);
     DDX_Check(pDX, IDC_FILTERING_USE_REGEX, m_filteringUseRegex);
     DDX_Text(pDX, IDC_FILTERING_MAX_AGE_DAYS, m_filteringMaxAgeDays);
+    DDX_Text(pDX, IDC_FILTERING_OWNER, m_filteringOwner);
     DDX_Control(pDX, IDC_FILTERING_MIN_UNITS, m_ctlFilteringSizeUnits);
     DDX_Control(pDX, IDC_FILTERING_EXCLUDE_FILES, m_ctrlFilteringExcludeFiles);
     DDX_Control(pDX, IDC_FILTERING_EXCLUDE_DIRS, m_ctrlFilteringExcludeDirs);
@@ -56,6 +57,7 @@ BEGIN_MESSAGE_MAP(CPageFiltering, CMFCPropertyPage)
     ON_EN_CHANGE(IDC_FILTERING_MIN_UNITS, OnSettingChanged)
     ON_CBN_SELENDOK(IDC_FILTERING_MIN_UNITS, OnSettingChanged)
     ON_EN_CHANGE(IDC_FILTERING_MAX_AGE_DAYS, OnSettingChanged)
+    ON_EN_CHANGE(IDC_FILTERING_OWNER, OnSettingChanged)
     ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
@@ -75,6 +77,7 @@ BOOL CPageFiltering::OnInitDialog()
     m_filteringSizeUnits = COptions::FilteringSizeUnits;
     m_filteringUseRegex = COptions::FilteringUseRegex;
     m_filteringMaxAgeDays = COptions::FilteringMaxAgeDays;
+    m_filteringOwner = COptions::FilteringOwner.Obj().c_str();
     m_filteringExcludeDirs = COptions::FilteringExcludeDirs.Obj().c_str();
     m_filteringExcludeFiles = COptions::FilteringExcludeFiles.Obj().c_str();
     m_filteringIncludeDirs = COptions::FilteringIncludeDirs.Obj().c_str();
@@ -138,6 +141,7 @@ void CPageFiltering::OnOK()
     COptions::FilteringSizeUnits = m_filteringSizeUnits;
     COptions::FilteringUseRegex = (FALSE != m_filteringUseRegex);
     COptions::FilteringMaxAgeDays = m_filteringMaxAgeDays;
+    COptions::FilteringOwner.Obj() = m_filteringOwner;
     COptions::FilteringExcludeFiles.Obj() = m_filteringExcludeFiles;
     COptions::FilteringExcludeDirs.Obj() = m_filteringExcludeDirs;
     COptions::FilteringIncludeFiles.Obj() = m_filteringIncludeFiles;

@@ -28,9 +28,10 @@ std::vector<std::wregex> CFiltering::ExcludeFilesRegex;
 std::vector<std::wregex> CFiltering::IncludeDirsRegex;
 std::vector<std::wregex> CFiltering::IncludeFilesRegex;
 std::vector<std::wstring> CFiltering::IncludeDirsAnchors;
-ULONGLONG CFiltering::SizeMinimumCalculated = 0;
-FILETIME  CFiltering::MaxAgeFileTimeCutoff  = {};
-bool      CFiltering::FilterActive          = false;
+ULONGLONG    CFiltering::SizeMinimumCalculated = 0;
+FILETIME     CFiltering::MaxAgeFileTimeCutoff  = {};
+std::wstring CFiltering::FilteringOwner;
+bool         CFiltering::FilterActive          = false;
 
 // --- Private helpers ---
 
@@ -198,11 +199,16 @@ void CFiltering::CompileFilters()
         MaxAgeFileTimeCutoff ={ DWORD(t), DWORD(t >> 32) };
     }
 
+    // Store owner filter lowercased for case-insensitive comparison
+    FilteringOwner = COptions::FilteringOwner.Obj();
+    std::transform(FilteringOwner.begin(), FilteringOwner.end(), FilteringOwner.begin(), towlower);
+
     // Cache whether any filter is active so callers can short-circuit cheaply
     FilterActive = !ExcludeDirsRegex.empty() || !ExcludeFilesRegex.empty() ||
                    !IncludeDirsRegex.empty()  || !IncludeFilesRegex.empty() ||
                    SizeMinimumCalculated != 0  ||
-                   std::bit_cast<ULONGLONG>(MaxAgeFileTimeCutoff) != 0;
+                   std::bit_cast<ULONGLONG>(MaxAgeFileTimeCutoff) != 0 ||
+                   !FilteringOwner.empty();
 
     // Rebuild toolbar to reflect status
     CMainFrame::Get()->RebuildToolBar();
@@ -294,7 +300,19 @@ bool CFiltering::IsFilteredOut(const std::wstring& fileName, const std::wstring&
 bool CFiltering::IsFilteredOut(const CItem* item)
 {
     if (item->IsTypeOrFlag(IT_FILE))
-        return IsFilteredOut(item->GetName(), item->GetPath(),
-            item->GetSizeLogical(), item->GetLastChange());
+    {
+        if (IsFilteredOut(item->GetName(), item->GetPath(),
+            item->GetSizeLogical(), item->GetLastChange()))
+            return true;
+
+        if (!FilteringOwner.empty())
+        {
+            std::wstring owner = item->GetOwner(true);
+            std::transform(owner.begin(), owner.end(), owner.begin(), towlower);
+            if (owner.find(FilteringOwner) == std::wstring::npos)
+                return true;
+        }
+        return false;
+    }
     return IsFilteredOut(item->GetPath());
 }
