@@ -386,6 +386,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
     ON_COMMAND(ID_VIEW_SHOWFILETYPES, OnViewShowFileTypes)
     ON_COMMAND(ID_VIEW_GROUP_TYPES, OnViewGroupUnregisteredTypes)
     ON_COMMAND(ID_VIEW_SHOWTREEMAP, OnViewShowTreeMap)
+    ON_COMMAND(ID_VIEW_LAYOUT_SIDE_BY_SIDE, OnViewLayoutSideBySide)
+    ON_UPDATE_COMMAND_UI(ID_VIEW_LAYOUT_SIDE_BY_SIDE, OnUpdateViewLayoutSideBySide)
     ON_COMMAND(ID_TREEMAP_LOGICAL_SIZE, OnViewTreeMapUseLogical)
     ON_MESSAGE(WM_ENTERSIZEMOVE, OnEnterSizeMove)
     ON_MESSAGE(WM_EXITSIZEMOVE, OnExitSizeMove)
@@ -770,15 +772,35 @@ void CMainFrame::OnDestroy()
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/, CCreateContext* pContext)
 {
-    m_splitter.CreateStatic(this, 2, 1);
-    m_splitter.CreateView(1, 0, RUNTIME_CLASS(CTreeMapView), CSize(100, 100), pContext);
-    m_subSplitter.CreateStatic(&m_splitter, 1, 2, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter.IdFromRowCol(0, 0));
-    m_subSplitter.CreateView(0, 0, RUNTIME_CLASS(CFileTabbedView), CSize(700, 500), pContext);
-    m_subSplitter.CreateView(0, 1, RUNTIME_CLASS(CExtensionView), CSize(100, 500), pContext);
+    if (COptions::LayoutSideBySide)
+    {
+        // Side-by-side: file list and extension panel on the left, treemap on the right
+        m_splitter.CreateStatic(this, 1, 2);
+        m_splitter.CreateView(0, 1, RUNTIME_CLASS(CTreeMapView), CSize(500, 100), pContext);
+        m_subSplitter.CreateStatic(&m_splitter, 2, 1, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter.IdFromRowCol(0, 0));
+        m_subSplitter.CreateView(0, 0, RUNTIME_CLASS(CFileTabbedView), CSize(400, 400), pContext);
+        m_subSplitter.CreateView(1, 0, RUNTIME_CLASS(CExtensionView), CSize(400, 150), pContext);
 
-    m_treeMapView    = DYNAMIC_DOWNCAST(CTreeMapView,    m_splitter.GetPane(1, 0));
-    m_fileTabbedView = DYNAMIC_DOWNCAST(CFileTabbedView, m_subSplitter.GetPane(0, 0));
-    m_extensionView  = DYNAMIC_DOWNCAST(CExtensionView,  m_subSplitter.GetPane(0, 1));
+        m_treeMapView    = DYNAMIC_DOWNCAST(CTreeMapView,    m_splitter.GetPane(0, 1));
+        m_fileTabbedView = DYNAMIC_DOWNCAST(CFileTabbedView, m_subSplitter.GetPane(0, 0));
+        m_extensionView  = DYNAMIC_DOWNCAST(CExtensionView,  m_subSplitter.GetPane(1, 0));
+    }
+    else
+    {
+        // Default: file list and extension panel on top, treemap on the bottom
+        m_splitter.CreateStatic(this, 2, 1);
+        m_splitter.CreateView(1, 0, RUNTIME_CLASS(CTreeMapView), CSize(100, 100), pContext);
+        m_subSplitter.CreateStatic(&m_splitter, 1, 2, WS_CHILD | WS_VISIBLE | WS_BORDER, m_splitter.IdFromRowCol(0, 0));
+        m_subSplitter.CreateView(0, 0, RUNTIME_CLASS(CFileTabbedView), CSize(700, 500), pContext);
+        m_subSplitter.CreateView(0, 1, RUNTIME_CLASS(CExtensionView), CSize(100, 500), pContext);
+
+        m_treeMapView    = DYNAMIC_DOWNCAST(CTreeMapView,    m_splitter.GetPane(1, 0));
+        m_fileTabbedView = DYNAMIC_DOWNCAST(CFileTabbedView, m_subSplitter.GetPane(0, 0));
+        m_extensionView  = DYNAMIC_DOWNCAST(CExtensionView,  m_subSplitter.GetPane(0, 1));
+    }
+
+    MinimizeTreeMapView();
+    MinimizeExtensionView();
 
     GetExtensionView()->ShowTypes(COptions::ShowFileTypes);
     GetTreeMapView()->ShowTreeMap(COptions::ShowTreeMap);
@@ -1434,6 +1456,21 @@ void CMainFrame::OnViewGroupUnregisteredTypes()
     CDirStatDoc::Get()->RebuildExtensionData();
     GetExtensionView()->OnUpdate(nullptr, HINT_NULL, nullptr);
     CDirStatDoc::Get()->UpdateAllViews(nullptr, HINT_TREEMAPSTYLECHANGED);
+}
+
+void CMainFrame::OnViewLayoutSideBySide()
+{
+    COptions::LayoutSideBySide = !static_cast<bool>(COptions::LayoutSideBySide);
+    PersistedSetting::WritePersistedProperties();
+    if (IDYES == WdsMessageBox(Localization::Lookup(IDS_RESTART_REQUEST), MB_YESNO | MB_ICONQUESTION))
+    {
+        CDirStatApp::Get()->RestartApplication();
+    }
+}
+
+void CMainFrame::OnUpdateViewLayoutSideBySide(CCmdUI* pCmdUI)
+{
+    pCmdUI->SetCheck(COptions::LayoutSideBySide);
 }
 
 void CMainFrame::OnViewShowExtensionsOnTreeMap()

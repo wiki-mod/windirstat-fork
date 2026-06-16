@@ -243,6 +243,7 @@
 #define ID_SAVE_PERMISSIONS             32945
 #define ID_TOOLS_STORAGE_ANALYTICS      32946
 #define ID_VIEW_WINDOW_LAYOUT           32948
+#define ID_VIEW_LAYOUT_SIDE_BY_SIDE     32949
 #define IDS_AUTHOR_EMAIL                57345
 #define IDS_URL_WEBSITE                 57346
 #define IDS_URL_HELP                    57347
