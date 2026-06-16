@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <string_view>
 constexpr std::wstring_view IDS_ABOUT_ABOUT = L"IDS_ABOUT_ABOUT";
 constexpr std::wstring_view IDS_ABOUT_ABOUT_TEXTss = L"IDS_ABOUT_ABOUT_TEXTss";
@@ -107,6 +107,7 @@ constexpr std::wstring_view IDS_MENU_COMPRESS_NONE = L"IDS_MENU_COMPRESS_NONE";
 constexpr std::wstring_view IDS_MENU_COMPRESS_XPRESS16K = L"IDS_MENU_COMPRESS_XPRESS16K";
 constexpr std::wstring_view IDS_MENU_COMPRESS_XPRESS4K = L"IDS_MENU_COMPRESS_XPRESS4K";
 constexpr std::wstring_view IDS_MENU_COMPRESS_XPRESS8K = L"IDS_MENU_COMPRESS_XPRESS8K";
+constexpr std::wstring_view IDS_MENU_CONFIGURE_LAYOUT = L"IDS_MENU_CONFIGURE_LAYOUT";
 constexpr std::wstring_view IDS_MENU_CONSOLE = L"IDS_MENU_CONSOLE";
 constexpr std::wstring_view IDS_MENU_COPY_CLIPBOARD = L"IDS_MENU_COPY_CLIPBOARD";
 constexpr std::wstring_view IDS_MENU_CREATE_HARDLINK = L"IDS_MENU_CREATE_HARDLINK";
@@ -240,6 +241,23 @@ constexpr std::wstring_view IDS_PAGE_GPU_START = L"IDS_PAGE_GPU_START";
 constexpr std::wstring_view IDS_PAGE_GPU_TEST_FILE = L"IDS_PAGE_GPU_TEST_FILE";
 constexpr std::wstring_view IDS_PAGE_GPU_TITLE = L"IDS_PAGE_GPU_TITLE";
 constexpr std::wstring_view IDS_PAGE_GPU_USE_GROUP = L"IDS_PAGE_GPU_USE_GROUP";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_COLUMN_CENTER = L"IDS_PAGE_LAYOUT_COLUMN_CENTER";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_COLUMN_LEFT = L"IDS_PAGE_LAYOUT_COLUMN_LEFT";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_COLUMN_RIGHT = L"IDS_PAGE_LAYOUT_COLUMN_RIGHT";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_MODE_DEFAULT = L"IDS_PAGE_LAYOUT_MODE_DEFAULT";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_MODE_GROUP = L"IDS_PAGE_LAYOUT_MODE_GROUP";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_MODE_SIDE = L"IDS_PAGE_LAYOUT_MODE_SIDE";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_MODE_WIDE = L"IDS_PAGE_LAYOUT_MODE_WIDE";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_PANEL_EXTENSIONS = L"IDS_PAGE_LAYOUT_PANEL_EXTENSIONS";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_PANEL_FILELIST = L"IDS_PAGE_LAYOUT_PANEL_FILELIST";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_PANEL_TREEMAP = L"IDS_PAGE_LAYOUT_PANEL_TREEMAP";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_RESET_POSITIONS = L"IDS_PAGE_LAYOUT_RESET_POSITIONS";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_RESTART_NOTE = L"IDS_PAGE_LAYOUT_RESTART_NOTE";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_SIDE_GROUP = L"IDS_PAGE_LAYOUT_SIDE_GROUP";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_TITLE = L"IDS_PAGE_LAYOUT_TITLE";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_TREEMAP_LEFT = L"IDS_PAGE_LAYOUT_TREEMAP_LEFT";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_TREEMAP_RIGHT = L"IDS_PAGE_LAYOUT_TREEMAP_RIGHT";
+constexpr std::wstring_view IDS_PAGE_LAYOUT_WIDE_GROUP = L"IDS_PAGE_LAYOUT_WIDE_GROUP";
 constexpr std::wstring_view IDS_PAGE_PERMS_ACCOUNT = L"IDS_PAGE_PERMS_ACCOUNT";
 constexpr std::wstring_view IDS_PAGE_PERMS_EXCLUDE = L"IDS_PAGE_PERMS_EXCLUDE";
 constexpr std::wstring_view IDS_PAGE_PERMS_LEVEL = L"IDS_PAGE_PERMS_LEVEL";
