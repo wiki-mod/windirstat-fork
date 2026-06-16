@@ -127,7 +127,7 @@ Setting<int> COptions::LanguageId(OptionsGeneral, L"LanguageId", 0);
 Setting<bool> COptions::UseGpuHashing(OptionsGeneral, L"UseGpuHashing", false);
 Setting<int> COptions::GpuHashAlgorithm(OptionsGeneral, L"GpuHashAlgorithm",
     HASH_SHA256, HASH_MD5, HASH_SHA512);
-
+Setting<int> COptions::ScanIoPriority(OptionsGeneral, L"ScanIoPriority", 1, 0, 2);
 Setting<int> COptions::FileHashAlgorithm(OptionsGeneral, L"FileHashAlgorithm",
     HASH_SHA512, HASH_MD5, HASH_SHA512);
 Setting<int> COptions::LargeFileCount(OptionsGeneral, L"LargeFileCount", 50, 0, 10000);

@@ -161,6 +161,7 @@
 #define IDC_GPU_RADIO_GPU               1142
 #define IDC_GPU_APPLY_GROUP             1143
 #define IDC_GPU_STATUS                  1144
+#define IDC_SCAN_IO_PRIORITY            1145
 #define ID_WDS_CONTROL                  4711
 #define ID_TREEMAP_ZOOMRESET            32767
 #define ID_CLEANUP_EXPLORER_SELECT      32768
@@ -265,7 +266,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        306
 #define _APS_NEXT_COMMAND_VALUE         32948
-#define _APS_NEXT_CONTROL_VALUE         1145
+#define _APS_NEXT_CONTROL_VALUE         1146
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
