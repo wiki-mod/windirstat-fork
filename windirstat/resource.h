@@ -23,6 +23,8 @@
 #define IDC_RADIO_TARGET_DRIVES_ALL     1000
 #define IDC_RADIO_TARGET_DRIVES_SUBSET  1001
 #define IDC_RADIO_TARGET_FOLDER         1002
+#define IDC_RADIO_TARGET_FOLDERS        1136
+#define IDC_MULTI_FOLDER_TREE           1137
 #define IDC_TARGET_DRIVES_LIST          1003
 #define IDC_TAB                         1004
 #define IDC_CAPTION                     1005
@@ -254,7 +256,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        306
 #define _APS_NEXT_COMMAND_VALUE         32948
-#define _APS_NEXT_CONTROL_VALUE         1136
+#define _APS_NEXT_CONTROL_VALUE         1138
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

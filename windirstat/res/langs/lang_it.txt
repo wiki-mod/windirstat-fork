@@ -59,6 +59,7 @@ IDS_DONT_SHOW_AGAIN=Non visualizzare più questo messaggio.
 IDS_DRIVE_ITEM_FREEsTOTALs={} liberi su {}
 IDS_DRIVES_ALL=&Tutte le unità locali
 IDS_DRIVES_FOLDER=&Cartella personalizzata
+IDS_DRIVES_FOLDERS=Multiple &Folders
 IDS_DRIVES_SUBSET=&Singole unità
 IDS_DRIVES_TITLE=WinDirStat - Selezione unità
 IDS_DUPLICATE_FILES=File duplicati

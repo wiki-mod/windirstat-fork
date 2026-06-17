@@ -59,6 +59,7 @@ IDS_DONT_SHOW_AGAIN=Diese Meldung nicht mehr anzeigen.
 IDS_DRIVE_ITEM_FREEsTOTALs={} frei von {}
 IDS_DRIVES_ALL=&Alle lokalen Laufwerke
 IDS_DRIVES_FOLDER=Ein &Verzeichnis
+IDS_DRIVES_FOLDERS=Multiple &Folders
 IDS_DRIVES_SUBSET=&Einzelne Laufwerke
 IDS_DRIVES_TITLE=WinDirStat - Laufwerke auswählen
 IDS_DUPLICATE_FILES=Duplizierte Dateien

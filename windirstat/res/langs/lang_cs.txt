@@ -59,6 +59,7 @@ IDS_DONT_SHOW_AGAIN=Už toto upozornění nezobrazovat.
 IDS_DRIVE_ITEM_FREEsTOTALs={} volných z {}
 IDS_DRIVES_ALL=&Všechny místní jednotky
 IDS_DRIVES_FOLDER=Jednotlivá &složka
+IDS_DRIVES_FOLDERS=Multiple &Folders
 IDS_DRIVES_SUBSET=Jednotlivé &jednotky
 IDS_DRIVES_TITLE=WinDirStat - výběr jednotek
 IDS_DUPLICATE_FILES=Duplicitní soubory

@@ -28,6 +28,7 @@ enum RADIO : std::uint8_t
 {
     RADIO_TARGET_DRIVES_ALL,
     RADIO_TARGET_DRIVES_SUBSET,
+    RADIO_TARGET_FOLDERS,
     RADIO_TARGET_FOLDER
 };
 
@@ -126,7 +127,9 @@ protected:
     int m_radio = 0;          // out.
     CStringW m_folderName;    // out. Valid if m_radio = RADIO_TARGET_FOLDER
     std::vector<std::wstring> m_drives;    // out. Valid if m_radio != RADIO_TARGET_FOLDER
+    std::vector<std::wstring> m_selectedFolders; // out. Valid if m_radio = RADIO_TARGET_FOLDERS
     CDrivesList m_driveList;
+    CTreeCtrl m_folderTree;
     CComboBox m_browseList;
     CButton m_okButton;
     CStatic m_browseButton;
@@ -144,7 +147,10 @@ protected:
     afx_msg LRESULT OnWmDriveInfoThreadFinished(WPARAM wParam, LPARAM lparam);
     afx_msg void OnSysColorChange();
     afx_msg void OnBnClickedRadioTargetDrivesSubset();
+    afx_msg void OnBnClickedRadioTargetFolders();
     afx_msg void OnBnClickedRadioTargetFolder();
+    afx_msg void OnTvnItemExpandingFolderTree(NMHDR* pNMHDR, LRESULT* pResult);
+    afx_msg void OnTvnItemChangedFolderTree(NMHDR* pNMHDR, LRESULT* pResult);
     afx_msg void OnBnDoubleclickedRadio();
     afx_msg void OnNMSetfocusTargetDrivesList(NMHDR*, LRESULT* pResult);
     afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);

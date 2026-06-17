@@ -59,6 +59,7 @@ IDS_DONT_SHOW_AGAIN=Больше не показывать это сообщен
 IDS_DRIVE_ITEM_FREEsTOTALs={} свободно из {}
 IDS_DRIVES_ALL=Все локальные диски
 IDS_DRIVES_FOLDER=Каталог
+IDS_DRIVES_FOLDERS=Multiple &Folders
 IDS_DRIVES_SUBSET=&Выбранные диски
 IDS_DRIVES_TITLE=WinDirStat - Выбор дисков
 IDS_DUPLICATE_FILES=Дубликаты файлов

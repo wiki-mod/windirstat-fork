@@ -61,6 +61,7 @@ constexpr std::wstring_view IDS_DONT_SHOW_AGAIN = L"IDS_DONT_SHOW_AGAIN";
 constexpr std::wstring_view IDS_DRIVE_ITEM_FREEsTOTALs = L"IDS_DRIVE_ITEM_FREEsTOTALs";
 constexpr std::wstring_view IDS_DRIVES_ALL = L"IDS_DRIVES_ALL";
 constexpr std::wstring_view IDS_DRIVES_FOLDER = L"IDS_DRIVES_FOLDER";
+constexpr std::wstring_view IDS_DRIVES_FOLDERS = L"IDS_DRIVES_FOLDERS";
 constexpr std::wstring_view IDS_DRIVES_SUBSET = L"IDS_DRIVES_SUBSET";
 constexpr std::wstring_view IDS_DRIVES_TITLE = L"IDS_DRIVES_TITLE";
 constexpr std::wstring_view IDS_DUPLICATE_FILES = L"IDS_DUPLICATE_FILES";

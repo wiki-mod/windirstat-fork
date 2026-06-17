@@ -19,6 +19,7 @@
 #include "Filtering.h"
 #include "SelectDrivesDlg.h"
 #include "FinderBasic.h"
+#include "Finder.h"
 
 namespace
 {
@@ -46,6 +47,118 @@ namespace
     {
         const SmartPointer path(free, _wfullpath(nullptr, relativePath.c_str(), 0));
         return path != nullptr ? static_cast<LPWSTR>(path) : relativePath;
+    }
+
+    // Sentinel LPARAM stored as dummy child to mark a node as not yet expanded
+    constexpr LPARAM TREE_DUMMY_CHILD = -1;
+
+    void TreePopulateChildren(CTreeCtrl& tree, HTREEITEM parent, const std::wstring& path)
+    {
+        // Remove the dummy placeholder
+        HTREEITEM child = tree.GetChildItem(parent);
+        if (child && tree.GetItemData(child) == TREE_DUMMY_CHILD)
+        {
+            tree.DeleteItem(child);
+        }
+
+        std::wstring searchPath = path;
+        if (!searchPath.empty() && searchPath.back() != L'\\') searchPath += L'\\';
+        searchPath += L'*';
+
+        WIN32_FIND_DATAW fd;
+        SmartPointer handle(FindClose, FindFirstFileW((Finder::MakeLongPathCompatible(
+            searchPath.substr(0, searchPath.size() - 1))).c_str(), &fd));
+
+        // Re-do with actual search
+        handle = FindFirstFileW(
+            (Finder::MakeLongPathCompatible(path) + L"\\*").c_str(), &fd);
+
+        if (handle == INVALID_HANDLE_VALUE) return;
+
+        do
+        {
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
+            if (wcscmp(fd.cFileName, L".") == 0 || wcscmp(fd.cFileName, L"..") == 0) continue;
+
+            std::wstring childPath = path;
+            if (!childPath.empty() && childPath.back() != L'\\') childPath += L'\\';
+            childPath += fd.cFileName;
+
+            TVINSERTSTRUCT tvis{};
+            tvis.hParent = parent;
+            tvis.hInsertAfter = TVI_SORT;
+            tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+            tvis.item.pszText = fd.cFileName;
+            tvis.item.lParam = reinterpret_cast<LPARAM>(new std::wstring(childPath));
+            tvis.item.cChildren = 1; // assume has children until proven otherwise
+
+            tree.InsertItem(&tvis);
+        }
+        while (FindNextFileW(handle, &fd));
+    }
+
+    void TreeInsertDrive(CTreeCtrl& tree, const std::wstring& drive)
+    {
+        std::wstring label = drive;
+        std::wstring name;
+        ULONGLONG total = 0, free = 0;
+        if (RetrieveDriveInformation(drive + L"\\", name, total, free) && !name.empty())
+            label = name;
+
+        TVINSERTSTRUCT tvis{};
+        tvis.hParent = TVI_ROOT;
+        tvis.hInsertAfter = TVI_SORT;
+        tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
+        tvis.item.pszText = label.data();
+        tvis.item.lParam = reinterpret_cast<LPARAM>(new std::wstring(drive + L"\\"));
+        tvis.item.cChildren = 1;
+
+        HTREEITEM hDrive = tree.InsertItem(&tvis);
+
+        // Insert dummy child so expand arrow appears
+        TVINSERTSTRUCT dummy{};
+        dummy.hParent = hDrive;
+        dummy.hInsertAfter = TVI_LAST;
+        dummy.item.mask = TVIF_TEXT | TVIF_PARAM;
+        dummy.item.pszText = const_cast<LPWSTR>(L"");
+        dummy.item.lParam = TREE_DUMMY_CHILD;
+        tree.InsertItem(&dummy);
+    }
+
+    void TreeCollectChecked(CTreeCtrl& tree, HTREEITEM item, std::vector<std::wstring>& result)
+    {
+        while (item)
+        {
+            const UINT state = tree.GetItemState(item, TVIS_STATEIMAGEMASK);
+            const bool checked = (state >> 12) == 2;
+
+            if (checked)
+            {
+                const auto* path = reinterpret_cast<const std::wstring*>(tree.GetItemData(item));
+                if (path && tree.GetItemData(item) != TREE_DUMMY_CHILD)
+                    result.emplace_back(*path);
+            }
+
+            if (HTREEITEM child = tree.GetChildItem(item))
+                TreeCollectChecked(tree, child, result);
+
+            item = tree.GetNextSiblingItem(item);
+        }
+    }
+
+    void TreeDeleteItems(CTreeCtrl& tree, HTREEITEM item)
+    {
+        while (item)
+        {
+            HTREEITEM next = tree.GetNextSiblingItem(item);
+            if (HTREEITEM child = tree.GetChildItem(item))
+                TreeDeleteItems(tree, child);
+            const LPARAM data = tree.GetItemData(item);
+            if (data != TREE_DUMMY_CHILD && data != 0)
+                delete reinterpret_cast<std::wstring*>(data);
+            item = next;
+        }
+        // DeleteAllItems handles actual HTREEITEM removal
     }
 }
 
@@ -309,6 +422,7 @@ void CSelectDrivesDlg::DoDataExchange(CDataExchange* pDX)
 {
     CLayoutDialogEx::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_TARGET_DRIVES_LIST, m_driveList);
+    DDX_Control(pDX, IDC_MULTI_FOLDER_TREE, m_folderTree);
     DDX_Radio(pDX, IDC_RADIO_TARGET_DRIVES_ALL, m_radio);
     DDX_Check(pDX, IDC_SCAN_DUPLICATES, m_scanDuplicates);
     DDX_Check(pDX, IDC_FAST_SCAN_CHECKBOX, m_useFastScan);
@@ -325,7 +439,10 @@ BEGIN_MESSAGE_MAP(CSelectDrivesDlg, CLayoutDialogEx)
     ON_BN_CLICKED(IDC_FAST_SCAN_CHECKBOX, OnBnClickedFastScanCheckbox)
     ON_BN_CLICKED(IDC_RADIO_TARGET_DRIVES_ALL, OnBnClickedUpdateButtons)
     ON_BN_CLICKED(IDC_RADIO_TARGET_DRIVES_SUBSET, &CSelectDrivesDlg::OnBnClickedRadioTargetDrivesSubset)
+    ON_BN_CLICKED(IDC_RADIO_TARGET_FOLDERS, &CSelectDrivesDlg::OnBnClickedRadioTargetFolders)
     ON_BN_CLICKED(IDC_RADIO_TARGET_FOLDER, &CSelectDrivesDlg::OnBnClickedRadioTargetFolder)
+    ON_NOTIFY(TVN_ITEMEXPANDING, IDC_MULTI_FOLDER_TREE, &CSelectDrivesDlg::OnTvnItemExpandingFolderTree)
+    ON_NOTIFY(TVN_ITEMCHANGED, IDC_MULTI_FOLDER_TREE, &CSelectDrivesDlg::OnTvnItemChangedFolderTree)
     ON_BN_CLICKED(IDC_SCAN_DUPLICATES, OnBnClickedUpdateButtons)
     ON_BN_DOUBLECLICKED(IDC_RADIO_TARGET_DRIVES_ALL, &CSelectDrivesDlg::OnBnDoubleclickedRadio)
     ON_BN_DOUBLECLICKED(IDC_RADIO_TARGET_DRIVES_SUBSET, &CSelectDrivesDlg::OnBnDoubleclickedRadio)
@@ -354,7 +471,9 @@ BOOL CSelectDrivesDlg::OnInitDialog()
     m_layout.AddControl(IDOK, 1, 1, 0, 0);
     m_layout.AddControl(IDCANCEL, 1, 1, 0, 0);
     m_layout.AddControl(IDC_TARGET_DRIVES_LIST, 0, 0, 1, 1);
+    m_layout.AddControl(IDC_MULTI_FOLDER_TREE, 0, 0, 1, 1);
     m_layout.AddControl(IDC_RADIO_TARGET_DRIVES_ALL, 0, 0, 1, 0);
+    m_layout.AddControl(IDC_RADIO_TARGET_FOLDERS, 0, 0, 1, 0);
     m_layout.AddControl(IDC_RADIO_TARGET_FOLDER, 0, 1, 0, 0);
     m_layout.AddControl(IDC_BROWSE_BUTTON, 1, 1, 0, 0);
     m_layout.AddControl(IDC_BROWSE_FOLDER, 0, 1, 1, 0);
@@ -435,6 +554,13 @@ BOOL CSelectDrivesDlg::OnInitDialog()
         m_suppressItemChanged = wasSuppressingItemChanged;
     }
 
+    // Populate the multi-folder TreeView with all available drives
+    for (const auto& drive : driveList)
+    {
+        TreeInsertDrive(m_folderTree, drive);
+    }
+    m_folderTree.ShowWindow(SW_HIDE);
+
     // Create list of local drives to append "All Local Drives" option
     std::vector<std::wstring> localDrives;
     for (const int i : std::views::iota(0, m_driveList.GetItemCount()))
@@ -452,8 +578,15 @@ BOOL CSelectDrivesDlg::OnInitDialog()
 
     UpdateData(FALSE);
 
+    // Show/hide the correct control for the persisted radio selection
+    const bool showTree = (m_radio == RADIO_TARGET_FOLDERS);
+    m_folderTree.ShowWindow(showTree ? SW_SHOW : SW_HIDE);
+    m_driveList.ShowWindow(showTree ? SW_HIDE : SW_SHOW);
+
     if (m_radio == RADIO_TARGET_DRIVES_SUBSET)
         m_driveList.SetFocus();
+    else if (m_radio == RADIO_TARGET_FOLDERS)
+        m_folderTree.SetFocus();
     else
         m_okButton.SetFocus();
 
@@ -467,7 +600,13 @@ void CSelectDrivesDlg::OnOK()
 
     m_drives.clear();
     m_selectedDrives.clear();
-    if (m_radio == RADIO_TARGET_FOLDER)
+    m_selectedFolders.clear();
+
+    if (m_radio == RADIO_TARGET_FOLDERS)
+    {
+        TreeCollectChecked(m_folderTree, m_folderTree.GetRootItem(), m_selectedFolders);
+    }
+    else if (m_radio == RADIO_TARGET_FOLDER)
     {
         if (!m_folderName.IsEmpty() && m_folderName.GetAt(m_folderName.GetLength() - 1) == L':') m_folderName.AppendChar(L'\\');
         m_folderName = ResolveFullPath(m_folderName.GetString()).c_str();
@@ -506,6 +645,12 @@ void CSelectDrivesDlg::OnOK()
         }
     }
 
+    // Multi-folder mode: hand checked TreeView paths directly to the scanner
+    if (m_radio == RADIO_TARGET_FOLDERS)
+    {
+        m_drives = m_selectedFolders;
+    }
+
     COptions::SelectDrivesRadio = m_radio;
     COptions::SelectDrivesDrives = m_selectedDrives;
     COptions::ScanForDuplicates = (FALSE != m_scanDuplicates);
@@ -530,6 +675,13 @@ void CSelectDrivesDlg::UpdateButtons()
         break;
     case RADIO_TARGET_DRIVES_SUBSET:
         enableOk = m_driveList.GetSelectedCount() > 0;
+        break;
+    case RADIO_TARGET_FOLDERS:
+        {
+            std::vector<std::wstring> checked;
+            TreeCollectChecked(m_folderTree, m_folderTree.GetRootItem(), checked);
+            enableOk = !checked.empty();
+        }
         break;
     case RADIO_TARGET_FOLDER:
         if (!m_folderName.IsEmpty())
@@ -569,20 +721,60 @@ void CSelectDrivesDlg::OnBnClickedFastScanCheckbox()
 
 void CSelectDrivesDlg::OnBnClickedRadioTargetDrivesSubset()
 {
-    // dynamically adjust next tab order
+    m_driveList.ShowWindow(SW_SHOW);
+    m_folderTree.ShowWindow(SW_HIDE);
     GetDlgItem(IDC_BROWSE_FOLDER)->SetWindowPos(
         GetDlgItem(IDC_TARGET_DRIVES_LIST), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    UpdateButtons();
+}
 
+void CSelectDrivesDlg::OnBnClickedRadioTargetFolders()
+{
+    m_folderTree.ShowWindow(SW_SHOW);
+    m_driveList.ShowWindow(SW_HIDE);
+    m_folderTree.SetFocus();
     UpdateButtons();
 }
 
 void CSelectDrivesDlg::OnBnClickedRadioTargetFolder()
 {
-    // dynamically adjust next tab order
+    m_driveList.ShowWindow(SW_SHOW);
+    m_folderTree.ShowWindow(SW_HIDE);
     GetDlgItem(IDC_TARGET_DRIVES_LIST)->SetWindowPos(
         GetDlgItem(IDC_BROWSE_FOLDER), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-
     UpdateButtons();
+}
+
+void CSelectDrivesDlg::OnTvnItemExpandingFolderTree(NMHDR* pNMHDR, LRESULT* pResult)
+{
+    const auto pNMTV = reinterpret_cast<NMTREEVIEW*>(pNMHDR);
+    *pResult = FALSE;
+
+    if (pNMTV->action != TVE_EXPAND) return;
+
+    const HTREEITEM hItem = pNMTV->itemNew.hItem;
+    HTREEITEM child = m_folderTree.GetChildItem(hItem);
+
+    // Only expand if still holding the dummy placeholder
+    if (!child || m_folderTree.GetItemData(child) != TREE_DUMMY_CHILD) return;
+
+    const auto* path = reinterpret_cast<const std::wstring*>(m_folderTree.GetItemData(hItem));
+    if (!path) return;
+
+    TreePopulateChildren(m_folderTree, hItem, *path);
+
+    // If no children were added, mark node as leaf
+    if (!m_folderTree.GetChildItem(hItem))
+    {
+        TVITEM tvi{ .mask = TVIF_CHILDREN, .hItem = hItem, .cChildren = 0 };
+        m_folderTree.SetItem(&tvi);
+    }
+}
+
+void CSelectDrivesDlg::OnTvnItemChangedFolderTree(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+    UpdateButtons();
+    *pResult = FALSE;
 }
 
 void CSelectDrivesDlg::OnBnDoubleclickedRadio()
@@ -700,9 +892,9 @@ BOOL CSelectDrivesDlg::PreTranslateMessage(MSG* pMsg)
 std::vector<std::wstring> CSelectDrivesDlg::GetSelectedItems() const
 {
     if (m_radio == RADIO_TARGET_FOLDER)
-    {
         return { m_folderName.GetString() };
-    }
+    if (m_radio == RADIO_TARGET_FOLDERS)
+        return m_selectedFolders;
     return m_drives; // valid for both RADIO_TARGET_DRIVES_ALL and RADIO_TARGET_DRIVES_SUBSET
 }
 
