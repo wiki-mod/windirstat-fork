@@ -1,0 +1,52 @@
+name: Build and publish test release
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or commit to build'
+        required: true
+        default: 'master'
+      release_tag:
+        description: 'Tag for the release'
+        required: true
+      release_name:
+        description: 'Release title'
+        required: true
+      release_body:
+        description: 'Release description (Markdown)'
+        required: false
+        default: ''
+      prerelease:
+        description: 'Mark as pre-release'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build (x64 Release)
+        run: msbuild windirstat.sln /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          name: ${{ inputs.release_name }}
+          body: ${{ inputs.release_body }}
+          prerelease: ${{ inputs.prerelease }}
+          target_commitish: ${{ inputs.ref }}
+          files: build/WinDirStat_x64.exe
