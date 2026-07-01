@@ -25,6 +25,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 jobs:
   build-and-release:
@@ -40,6 +42,11 @@ jobs:
 
       - name: Build (x64 Release)
         run: msbuild windirstat.sln /p:Configuration=Release /p:Platform=x64 /m /v:minimal
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/WinDirStat_x64.exe
 
       - name: Create release
         uses: softprops/action-gh-release@v2
